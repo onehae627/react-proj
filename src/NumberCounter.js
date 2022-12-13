@@ -17,6 +17,14 @@ function NumberCounter() {
       <hr />
       <button onClick={() => setNo(no + 1)}>증가</button>
       {noIsEvenDiv}
+      {no % 8 == 0 ? (
+        <>
+          <hr />
+          <sapn>8의 배수입니다.</sapn>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 }
