@@ -17,7 +17,8 @@ function StopWatch() {
       숫자 : {num}
       <hr />
       <button onclick={pause}>일시정지</button>
-      
+      <hr />
+      <button onClick={resume}>재개</button>
     </>
   );
   
