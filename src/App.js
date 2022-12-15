@@ -6,8 +6,12 @@ function App() {
     <>
       {/* <StopWatch /> */}
       {/* <NumberCounter /> */}
-      <Popup />
-     
+      {/* <Popup /> */}
+     <div style={{display: "inline-flex" ,flexDirection: "column", gap : "10px"}}>
+      <img src="https://picsum.photos/id/237/400/400"/>
+      <div style={{textAlign: "center"}}>MAC OS</div>
+      <div style={{textAlign: "center"}}>4,340,000</div>
+     </div>
 
     </>
   );
