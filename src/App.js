@@ -6,7 +6,7 @@ function App() {
     <>
       {/* <StopWatch /> */}
       {/* <NumberCounter /> */}
-      <Popup/>
+      <Popup />
      
 
     </>
