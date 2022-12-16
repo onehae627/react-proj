@@ -10,7 +10,7 @@ function App() {
       {/* <StopWatch /> */}
       {/* <NumberCounter /> */}
       {/* <Popup /> */}
-      <ProdList />
+      <ProdList className="container mx-auto" />
     </>
   );
 }
