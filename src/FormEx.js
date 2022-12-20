@@ -34,7 +34,12 @@ function FormEx() {
   return (
     <>
       <form onSubmit={onSubmit}>
-        <input name="name" type="text" placeholder="이름을 입력해주세요." />
+        <input
+          name="name"
+          type="text"
+          placeholder="이름을 입력해주세요."
+          autoComplete="off"
+        />
         <br />
         <input
           name="age"
