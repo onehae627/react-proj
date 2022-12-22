@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function RefEx() {
+function RefRemoveEx() {
   const noInputRef = useRef(null);
   const [no, setNo] = useState("");
 
@@ -55,4 +55,4 @@ function RefEx() {
   );
 }
 
-export default RefEx;
+export default RefRemoveEx;
