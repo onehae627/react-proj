@@ -4,7 +4,9 @@ function RefEx() {
   const noInputRef = useRef(null);
   const [no, setNo] = useState("");
 
-  const [recordedNos, setRecordedNos] = useState([5, 10, 15, 5, 20, 25, 5, 30]);
+  const [recordedNos, setRecordedNos] = useState([
+    5, 10, 15, 5, 20, 25, 5, 30, 35, 40, 45, 50,
+  ]);
 
   const saveNo = () => {
     if (no === "") {
@@ -15,18 +17,8 @@ function RefEx() {
     setNo("");
     noInputRef.current.focus();
   };
-  const removeNo5 = () => {
-    const newRecordedNo5 = recordedNos.filter((el) => el != 5);
-    setRecordedNos(newRecordedNo5);
-  };
-  const removeNoFirst = () => {
-    const newRecordedNo5 = recordedNos.filter((_, index) => index != 0);
-    setRecordedNos(newRecordedNo5);
-  };
-  const removeNoLast = () => {
-    const newRecordedNo5 = recordedNos.filter(
-      (_, index) => index != recordedNos.length - 1
-    );
+  const removeNo = (index) => {
+    const newRecordedNo5 = recordedNos.filter((el, _index) => _index != index);
     setRecordedNos(newRecordedNo5);
   };
 
@@ -55,9 +47,10 @@ function RefEx() {
       </ul>
 
       <hr />
-      <button onClick={removeNo5}> 숫자 5 삭제</button>
-      <button onClick={removeNoFirst}>첫번째 숫자 삭제</button>
-      <button onClick={removeNoLast}>마지막 숫자 삭제</button>
+      <button onClick={() => removeNo(0)}> index 0 삭제</button>
+      <button onClick={() => removeNo(3)}> index 3 삭제</button>
+      <button onClick={() => removeNo(5)}> index 5 삭제</button>
+      <button onClick={() => removeNo(7)}> index 7 삭제</button>
     </>
   );
 }
