@@ -42,15 +42,15 @@ function RefEx() {
       <h1>기록된 숫자</h1>
       <ul>
         {recordedNos.map((el, index) => (
-          <li key={index}>{el}</li>
+          <li key={index}>
+            <span style={{ width: 70, display: "inline-block" }}>{el}</span>
+            <span style={{ width: 70, display: "inline-block" }}>{index}</span>
+            <button onClick={() => removeNo(index)}>삭제</button>
+          </li>
         ))}
       </ul>
 
       <hr />
-      <button onClick={() => removeNo(0)}> index 0 삭제</button>
-      <button onClick={() => removeNo(3)}> index 3 삭제</button>
-      <button onClick={() => removeNo(5)}> index 5 삭제</button>
-      <button onClick={() => removeNo(7)}> index 7 삭제</button>
     </>
   );
 }
