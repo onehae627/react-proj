@@ -6,11 +6,14 @@ import NoRecord from "./NoRecord";
 import FormEx from "./FormEx";
 import "./App.css";
 import RefModifyEx from "./RefModifyEx";
+import Notice from "./Notice";
+
 function App() {
   return (
     <>
       {/* <FormEx /> */}
-      <RefModifyEx />
+      {/* <RefModifyEx /> */}
+      <Notice />
     </>
   );
 }

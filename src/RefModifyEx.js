@@ -60,6 +60,9 @@ function RefModifyEx() {
             <button onClick={() => modifyNo(index, el + 1)}>+1</button>
             <button onClick={() => modifyNo(index, el - 1)}>-1</button>
             <button onClick={() => modifyNo(index, 0)}>0</button>
+            <button onClick={() => modifyNo(index, el * 2)}>x2</button>
+            <button onClick={() => modifyNo(index, el / 2)}>/2</button>
+            <button onClick={() => modifyNo(index, el % 3)}>%3</button>
           </li>
         ))}
       </ul>
