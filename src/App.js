@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 import "./App.css";
 
-function App() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const html = document.getElementsByTagName("html")[0];
-
-    if (isDark) {
-      html.classList.add("dark");
-    } else {
-      html.classList.remove("dark");
-    }
-  }, [isDark]);
+let SubCallCount = 0;
+function Sub({ no1, no2 }) {
+  SubCallCount++;
+  console.log(`SubCallCount: ${SubCallCount}`);
 
   return (
     <>
-      <div>
-        <button className="btn-toggle-theme" onClick={() => setIsDark(!isDark)}>
-          테마토글
-        </button>
+      <div style={{ border: "5px solid red", padding: 10 }}>
+        서브:{no1 + no2}
       </div>
+    </>
+  );
+}
 
-      <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis
-        tempore similique quaerat, rerum sunt alias repellat aliquid! Nesciunt
-        fugit maiores quia obcaecati sed! A veniam eos earum porro eaque
-        commodi?
-      </div>
+let AppCallCount = 0;
 
-      <h1 className="color-primary">하하 호호</h1>
+const MemorisedSub = React.memo(Sub);
+function App() {
+  AppCallCount++;
+  console.log(`AppCallCount: ${AppCallCount}`);
+
+  const [no, setNo] = useState(0);
+  return (
+    <>
+      <div>안녕하세요</div>
+      <button onClick={() => setNo(no + 1)}>버튼 : {no}</button>
+      <hr />
+      <MemorisedSub no1={10} no2={no} />
     </>
   );
 }

@@ -43,3 +43,7 @@ html > body {
 }
 
 /* 테마 끝 */
+
+body {
+  font-size: 20px;
+}
