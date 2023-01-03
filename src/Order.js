@@ -28,11 +28,28 @@ function Order() {
 
   // optionCheckeds가 모두가 참일 때 전체선택 됨
   const btnAllChecked = optionCheckeds.every((el) => el);
+
+  const toggleAllChecked = () => {
+    if (btnAllChecked) {
+      // 전부 체크해제
+      const newOptionCheckeds = optionCheckeds.map((el) => false);
+      setOptionCheckeds(newOptionCheckeds);
+    } else {
+      // 전부 체크
+      const newOptionCheckeds = optionCheckeds.map((el) => true);
+      setOptionCheckeds(newOptionCheckeds);
+    }
+  };
   return (
     <>
       <h1>음식주문</h1>
       <h2>옵션</h2>
-      <span>{btnAllChecked ? "[v]" : "[ ]"}전체선택</span>
+      <span
+        onClick={toggleAllChecked}
+        style={{ paddingLeft: 30, userSelect: "none" }}
+      >
+        {btnAllChecked ? "[v]" : "[ ]"}전체선택
+      </span>
 
       <ul>
         {options.map((option, index) => (
