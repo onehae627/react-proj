@@ -18,14 +18,26 @@ function Order() {
     true,
     true,
   ]);
+
+  const toggleOptionCheck = (index) => {
+    const newOptionCheckeds = optionCheckeds.map((el, _index) =>
+      _index === index ? !el : el
+    );
+    setOptionCheckeds(newOptionCheckeds);
+  };
   return (
     <>
       <h1>음식주문</h1>
 
       <ul>
         {options.map((option, index) => (
-          <li key={option}>
-            {optionCheckeds[index] ? "[v]" : "[ ]"} {option}
+          <li
+            key={option}
+            style={{ userSelect: "none", cursor: "pointer" }}
+            onClick={() => toggleOptionCheck(index)}
+          >
+            {optionCheckeds[index] ? "[v]" : "[ ]"}
+            {option}
           </li>
         ))}
       </ul>
