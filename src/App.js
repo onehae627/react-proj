@@ -1,15 +1,14 @@
-import React, {  useState } from "react";
+import React, {  useState, useRef } from "react";
 
 import "./App.css";
 
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [lastTodoId, setLastTodoId] = useState(0);
+  const lastTodoId = useRef(0);
 
   const addTodo = (newcontent) => {
-    const id = lastTodoId + 1;
-    setLastTodoId(id);
+    const id = lastTodoId.current++;
     const newTodo = {
       id,
       // 문장은 받아온걸로 넣겠다.
