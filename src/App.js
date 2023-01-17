@@ -25,6 +25,11 @@ function App() {
     const newTodos = todos.filter((_, _index) => _index != index);
     setTodos(newTodos);
   }
+
+  const modifyTodo = (index, newcontent) => {
+    const newTodos = todos.map((todo, _index) => _index != index ? todo : {...todo, content: newcontent})
+    setTodos(newTodos);
+  }
   // 추가 버튼을 누르면addTodo실행됨. 
   const onBtnAddTofoClick = () => {
     addTodo("안녕");
@@ -33,10 +38,15 @@ function App() {
   const onBtnDeleteTofoClick = () => {
     removeTodo(1);
   }
+
+  const onBtnModifyTofoClick = () => {
+    modifyTodo(1, "헤헷");
+  }
   return (
     <>
       <button onClick={onBtnAddTofoClick}>추가</button>
       <button onClick={onBtnDeleteTofoClick}>삭제</button>
+      <button onClick={onBtnModifyTofoClick}>수정</button>
       <hr />
       <ul>
         {todos.map((todo, index) => (
