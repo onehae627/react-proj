@@ -19,13 +19,24 @@ function App() {
     const newTodos = [...todos, newTodo ];
     setTodos(newTodos);
   }
+
+  const removeTodo = (index) => {
+    // 해당 인덱스 빼고 다 필터링한다.~~
+    const newTodos = todos.filter((_, _index) => _index != index);
+    setTodos(newTodos);
+  }
   // 추가 버튼을 누르면addTodo실행됨. 
   const onBtnAddTofoClick = () => {
     addTodo("안녕");
   }
+
+  const onBtnDeleteTofoClick = () => {
+    removeTodo(1);
+  }
   return (
     <>
       <button onClick={onBtnAddTofoClick}>추가</button>
+      <button onClick={onBtnDeleteTofoClick}>삭제</button>
       <hr />
       <ul>
         {todos.map((todo, index) => (
