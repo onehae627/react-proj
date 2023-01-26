@@ -12,14 +12,15 @@ const theme = createTheme({
     },
     palette: {
       primary: {
-        main: "#ff8686",
+        main: "#1c8c3a",
         contrastText: "#ffffff"
       }
     }
 });
-root.render(<ThemeProvider theme={theme}>
-    <CssBaseline />
-    <App />
+root.render(
+    <ThemeProvider theme={theme}>
+       <CssBaseline />
+       <App theme={theme} />
     </ThemeProvider>);
 
     
