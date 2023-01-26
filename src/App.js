@@ -127,7 +127,7 @@ function App({ theme }) {
             <li key={todo.id} className="mt-10">
               <div className="flex gap-2">
               <Chip label={`번호 : ${todo.id}`} variant="outlined" className="!pt-1"/>
-              <Chip label={`번호 : {todo.regDate}`} variant="outlined" color="primary"className="!pt-1" />
+              <Chip label={todo.regDate} variant="outlined" color="primary"className="!pt-1" />
                 
               </div>
               <div className="flex shadow mt-4 rounded-[20px]">
