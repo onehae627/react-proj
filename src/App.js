@@ -1,5 +1,5 @@
-import React,{useState, useRef, useEffect} from "react";
-import {AppBar,Toolbar,Button,TextField, Chip }  from "@mui/material";
+import React,{useState, useRef, useEffect, useMemo} from "react";
+import {AppBar,Toolbar,Button,TextField, Chip, SwipeableDrawer, List, ListItem, ListItemButton, Modal  }  from "@mui/material";
 import "./App.css";
 import classNames from "classnames";
 
@@ -32,11 +32,36 @@ function useTodosState() {
     setTodos(newTodos);
   };
 
+  const removeTodoById = (id) => {
+    const index = todos.findIndex((todo) => todo.id == id);
+    return removeTodo(index);
+  }
+
+  const findTodoById = (id) => {
+    const index = todos.findIndex((todo) => todo.id == id);
+    if ( index == -1) {
+      return null;
+    }
+    return todos[index];
+  }
+
+  const modifyTodoById = (id, newContent) => {
+   const index = todos.findIndex((todo) => todo.id == id);
+
+   if ( index == -1){
+    return;
+   }
+   modifyTodo(index, newContent);
+  }
+
   return {
     todos,
     addTodo,
     modifyTodo,
-    removeTodo
+    removeTodo,
+    removeTodoById,
+    findTodoById,
+    modifyTodoById,
   };
 }
 
@@ -53,6 +78,221 @@ const muiThemePaletteKeys = [
   "warning",
 ];
 
+function NewTodoForm({todosState}) {
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    form.content.value = form.content.value.trim();
+
+    if (form.content.value.length == 0) {
+      alert("할 일을 입력해주세요.");
+      form.content.focus();
+
+      return;
+    }
+
+    todosState.addTodo(form.content.value);
+    form.content.value = "";
+    form.content.focus();
+  };
+  return(
+    <>
+     <form onSubmit={onSubmit} className="flex flex-col mt-4 px-4 gap-2">
+        <TextField
+          minRows={3}
+          maxRows={10}
+          multiline
+          autoComplete="off"
+          name="content"
+          label="할 일을 입력해주세요."
+          variant="outlined"
+        />
+        
+        <Button type="submit" variant="contained">추가</Button>
+        </form>
+    </>
+  )
+}
+
+function TodoListItem({todo, index, openDrawer}) {
+  return(<>
+   <li key={todo.id} className="mt-10">
+      <div className="flex gap-2">
+         <Chip label={`번호 : ${todo.id}`} variant="outlined" className="!pt-1"/>
+         <Chip label={todo.regDate} variant="outlined" color="primary"className="!pt-1" />
+                
+       </div>
+      <div className="flex shadow mt-4 rounded-[20px]">
+         <Button className=" w-[130px] flex-shirik-0 !items-start !rounded-[20px_0_0_20px]" color="inherit">
+                  <span className={classNames("text-3xl", "flex items-center","h-[50px]", {
+                    "text-[color:var(--mui-color-primary-main)]": index % 2 == 0,
+                  },{
+                    "text-[#6fd189]": index % 2 != 0,
+                  })}>
+                    <i className="fa-sharp fa-solid fa-check"></i>
+                  </span>
+         </Button>
+                <div className="flex-shirik-0 w-[2px] bg-[#6fd189] my-5 mr-6"></div>
+                <div className=" flex-grow whitespace-pre-wrap leading-relaxed hover:text-[color:var(--mui-color-primary-main)] my-5 flex items-center">
+                  {todo.content}      
+                </div>
+         <Button onClick={() => openDrawer(todo.id)} className=" w-[130px] flex-shirik-0 !items-start !rounded-[0_20px_20px_0]" color="inherit">
+                  <span className="text-xl text-[#6fd189] flex items-center h-[50px]"><i className="fa-solid fa-ellipsis"></i></span>
+         </Button>
+       </div>
+
+            </li>
+  </>)
+}
+
+
+// Drawer 훅으로 만들기.
+function useTodoOptionDrawerState() {
+  const [todoId, setTodoId] = useState(null);
+  const opened = useMemo(() => todoId !== null, [todoId]);
+  const close = () => setTodoId(null);
+  const open = (id) => setTodoId(id);
+  
+  return {
+    todoId,
+    opened,
+    close,
+    open
+  };
+
+    
+}
+
+function EditTodoModal({ state, todo, todosState, closeDrawer }) {
+  const close = () => {
+    state.close();
+    closeDrawer();
+  }
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    form.content.value = form.content.value.trim();
+
+    if (form.content.value.length == 0) {
+      alert("할 일을 입력해주세요.");
+      form.content.focus();
+
+      return;
+    }
+    todosState.modifyTodoById(todo.id, form.content.value);
+    close();
+    
+  };
+  return(
+    <>
+      <Modal
+        open={state.opened}
+        onClose={close}
+        className="flex justify-center items-center"
+      >
+       <div className="bg-white p-10 rounded-[20px]">
+        <form onSubmit={onSubmit} className="flex flex-col mt-4 px-4 gap-2">
+        <TextField
+          minRows={3}
+          maxRows={10}
+          multiline
+          autoComplete="off"
+          name="content"
+          label="할 일을 입력해주세요."
+          variant="outlined"
+          defaultValue={todo?.content}
+        />
+        
+        <Button type="submit" variant="contained">수정</Button>
+        </form>
+       </div>
+      </Modal>
+    </>
+  )
+}
+
+function useEditTodoModalState() {
+  const [opened, setOpened] = useState(false);
+
+  const open = () => {
+    setOpened(true)
+  }
+  const close = () => {
+    setOpened(false)
+  }
+  return {
+    opened,
+    open,
+    close
+  }
+}
+
+
+function TodoOptionDrawer({state, todosState}) {
+  const editTodoModalState = useEditTodoModalState(); 
+  const removeTodo = () => {
+    // 리액트에서는 window까지 붙여줘야함.
+    if (window.confirm(`${state.todoId}번 할 일을 삭제하시겠습니까?`) == false){
+      state.close();
+      return;
+    }
+    // id맞는 애들을 찾아서 리턴해주겠다.(게시물번호)
+    todosState.removeTodoById(state.todoId);
+    state.close();
+  }
+
+  const todo = todosState.findTodoById(state.todoId);
+
+
+
+  return (
+    <>
+    <EditTodoModal state={editTodoModalState} todo={todo} todosState={todosState} closeDrawer={state.close} />
+      <SwipeableDrawer
+        anchor={"bottom"}
+        open={state.opened}
+        onClose={state.close}
+        >
+        <List className="!py-0">
+        <ListItem className="!pt-6 !p-5">
+          <span className="text-[color:var(--mui-color-primary-main)] !pr-2">{state.todoId}번</span>옵션 드로어
+        </ListItem>
+        <ListItemButton className="!pt-6 !p-5 !items-baseline"  onClick={editTodoModalState.open}>
+          <i className="fa-solid fa-pen"></i>        
+          <span className="pl-2">수정</span>
+        </ListItemButton>
+        <ListItemButton className="!pt-6 !p-5 !items-baseline" onClick={removeTodo}>
+          <i className="fa-solid fa-trash"></i>       
+          <span className="pl-2">삭제</span>
+          </ListItemButton>
+        </List>
+      </SwipeableDrawer>
+   
+    </>
+  )
+}
+
+
+function TodoList({todosState}) {
+  const todoOptionDrawerState = useTodoOptionDrawerState();
+  
+  return(<>
+       <TodoOptionDrawer state={todoOptionDrawerState} todosState={todosState} />
+       <div className="mt-4 px-4">
+        <ul>
+          {todosState.todos.map((todo, index) => (
+           <TodoListItem key={todo.id} todo={todo} index={index} todosState={todosState}
+           openDrawer={todoOptionDrawerState.open}
+           />
+          ))}
+        </ul>
+       </div>
+  </>)
+}
 
 function App({ theme }) {
   const todosState = useTodosState();
@@ -78,24 +318,7 @@ function App({ theme }) {
     });
   }, []);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-
-    form.content.value = form.content.value.trim();
-
-    if (form.content.value.length == 0) {
-      alert("할일을 입력해주세요.");
-      form.content.focus();
-
-      return;
-    }
-
-    todosState.addTodo(form.content.value);
-    form.content.value = "";
-    form.content.focus();
-  };
+  
  
   return (
     <>
@@ -108,51 +331,8 @@ function App({ theme }) {
        </AppBar>
        <Toolbar />
        
-       <form onSubmit={onSubmit} className="flex flex-col mt-4 px-4 gap-2">
-        <TextField
-          minRows={3}
-          maxRows={10}
-          multiline
-          autoComplete="off"
-          name="content"
-          label="할일을 입력해주세요."
-          variant="outlined"
-        />
-        <Button type="submit" variant="contained">추가</Button>
-        </form>
-      
-      <div className="mt-4 px-4">
-        <ul>
-          {todosState.todos.map((todo, index) => (
-            <li key={todo.id} className="mt-10">
-              <div className="flex gap-2">
-              <Chip label={`번호 : ${todo.id}`} variant="outlined" className="!pt-1"/>
-              <Chip label={todo.regDate} variant="outlined" color="primary"className="!pt-1" />
-                
-              </div>
-              <div className="flex shadow mt-4 rounded-[20px]">
-                <Button className=" w-[130px] flex-shirik-0 !items-start !rounded-[20px_0_0_20px]" color="inherit">
-                  <span className={classNames("text-3xl", "flex items-center","h-[50px]", {
-                    "text-[color:var(--mui-color-primary-main)]": index % 2 == 0,
-                  },{
-                    "text-[#6fd189]": index % 2 != 0,
-                  })}>
-                    <i class="fa-sharp fa-solid fa-check"></i>
-                  </span>
-                </Button>
-                <div className="flex-shirik-0 w-[2px] bg-[#6fd189] my-5 mr-6"></div>
-                <div className=" flex-grow whitespace-pre-wrap leading-relaxed hover:text-[color:var(--mui-color-primary-main)] my-5 flex items-center">
-                  {todo.content}      
-                </div>
-                <Button className=" w-[130px] flex-shirik-0 !items-start !rounded-[0_20px_20px_0]" color="inherit">
-                  <span className="text-xl text-[#6fd189] flex items-center h-[50px]"><i class="fa-solid fa-ellipsis"></i></span>
-                </Button>
-              </div>
-
-            </li>
-          ))}
-        </ul>
-      </div>
+       <NewTodoForm todosState={todosState} />
+       <TodoList todosState={todosState} /> 
     </>
   );
 }
