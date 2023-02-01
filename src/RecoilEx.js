@@ -14,6 +14,17 @@ const page2NoAtom = atom({
     default : 0,
 });
 
+const page3NoAtom = atom({
+    //키는 절대 겹쳐서는 안됨. 고유의 값이여야함.
+    key : "RecoilEx/page3NoAtom",
+    default : 0,
+});
+
+const page4NoAtom = atom({
+    key : "RecoilEx/page4NoAtom",
+    default : 0,
+});
+
 
 // useRecoilState은 useState랑 똑같은데 리코일에서 관리하는 스테이트라고 생각하면됨.
 function Page1() {
@@ -58,12 +69,46 @@ function Page2() {
     </>
 }
 
+function Page3() {
+    const [no, setNo] = useRecoilState(page3NoAtom);
+
+    return <>
+    <h1>페이지 3</h1>
+    <ul>
+        <li>페이지 3의 숫자 : {no}</li>
+        <li>
+        <Button onClick={() => setNo(no + 10)} variant="outlined">페이지 3의 10 증가</Button>
+        </li>
+    </ul>
+    </>
+}
+
+function Page4() {
+    const [no, setNo] = useRecoilState(page4NoAtom);
+ 
+    return <>
+    <h1>페이지 4</h1>
+
+    <ul>
+        <li>페이지 4의 숫자 : {no}</li>
+        <li>
+        <Button onClick={() => setNo(no + 10)} variant="outlined">페이지 4의 10 증가</Button>   
+        </li>
+    </ul>
+    </>
+}
+
 export default function RecoilEx() {
-    const [pageName, setPageName] = useState("page1");
-    const switchPage= () => setPageName(pageName == "page1" ? "page2" : "page1");
+    const [pageNo, setPageNo] = useState(1);
+    // 4 이상 가면 더 이상 페이지가 없으니까 다시 초기화.
+    const switchPage= () => setPageNo(pageNo + 1 <= 4 ? pageNo + 1 : 1);
+
+    const pageName = "page" + pageNo;
     return<>
     <Button onClick={switchPage} variant="outlined">스위치</Button>
     {pageName == "page1" && <Page1 />}
     {pageName == "page2" && <Page2 />}
+    {pageName == "page3" && <Page3 />}
+    {pageName == "page4" && <Page4 />}
     </>
 }
