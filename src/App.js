@@ -2,6 +2,10 @@ import React,{useState, useRef, useEffect, useMemo} from "react";
 import {AppBar,Toolbar,Button,TextField, Chip, SwipeableDrawer, List, ListItem, ListItemButton, Modal, Snackbar, Alert as MuiAlert }  from "@mui/material";
 import "./App.css";
 import classNames from "classnames";
+import RecoilEx from "./RecoilEx";
+
+
+
 
 import { atom, useRecoilState } from "recoil";
 
@@ -397,8 +401,7 @@ function App({ theme }) {
  
   return (
     <>
-      
-       <AppBar position="fixed">
+        <AppBar position="fixed">
         <Toolbar>
           <div className="flex-1"></div>
           <div className="font-bold">NOTEPAD</div>
@@ -437,4 +440,4 @@ function dateToStr(d) {
   );
 }
 
-export default App;
+export default App; 
