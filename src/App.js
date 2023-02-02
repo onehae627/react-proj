@@ -9,14 +9,20 @@ import RecoilEx from "./RecoilEx";
 
 import { atom, useRecoilState } from "recoil";
 
+import { recoilPersist} from "recoil-persist";
+const { persistAtom } = recoilPersist();
+
+
 const todosAtom = atom({
   key: "app/todosAtom",
   default: [],
+  effects_UNSTABLE: [persistAtom],
 });
 
 const lastTodoIdAtom = atom({
   key: "app/lastTodoIdAtom",
   default: 0,
+  effects_UNSTABLE: [persistAtom],
 });
 
 
@@ -376,11 +382,7 @@ function App({ theme }) {
   const todosStatus = useTodosStatus();
   const noticeSnackbarStatus = useNoticeSnackbarStatus();
 
-  useEffect(() => {
-    todosStatus.addTodo("운동\n스트레칭\n유산소\n스쿼트\n자전거");
-    todosStatus.addTodo("요리");
-    todosStatus.addTodo("독서");
-  },[]);
+ 
 
   useEffect(() => {
     const r = document.querySelector(':root');
@@ -412,7 +414,7 @@ function App({ theme }) {
        <NoticeSnackbar status={noticeSnackbarStatus}/>
        <NewTodoForm noticeSnackbarStatus={noticeSnackbarStatus}/>
        <TodoList noticeSnackbarStatus={noticeSnackbarStatus} /> 
-       
+       {/* <RecoilEx/> */}
     </>
   );
 }

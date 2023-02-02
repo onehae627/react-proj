@@ -2,11 +2,16 @@ import React,{ useState } from "react";
 import { Button } from "@mui/material";
 import { atom, atomFamily, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
+import { recoilPersist} from "recoil-persist";
+
+const { persistAtom } = recoilPersist();
+
 //atomFamily는 말 그대로 여러개를 쓸 때 받아서 쓸 수 있다.
 const pageNoAtomFamily = atomFamily({
     //키는 절대 겹쳐서는 안됨. 고유의 값이여야함.
     key : "RecoilEx/pageNoAtomFamily",
     default : (no) => 0,
+    effects_UNSTABLE: [persistAtom],
 });
 
 
