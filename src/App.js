@@ -10,19 +10,39 @@ import RecoilEx from "./RecoilEx";
 import { atom, useRecoilState } from "recoil";
 
 import { recoilPersist} from "recoil-persist";
-const { persistAtom } = recoilPersist();
 
+const { persistAtom:persistAtomTodos } = recoilPersist({
+  key : "persistAtomTodos"
+});
+const { persistAtom:persistAtomLastTodoId } = recoilPersist({
+  key : "persistAtomLastTodoId"
+});
 
 const todosAtom = atom({
   key: "app/todosAtom",
-  default: [],
-  effects_UNSTABLE: [persistAtom],
+  default: [{
+    id: 3,
+    regDate: "2023-02-02 12:12:12",
+    content: "운동"
+  },
+  {
+    id: 2,
+    regDate: "2023-02-02 12:12:12",
+    content: "책읽기"
+  },
+  {
+    id: 1,
+    regDate: "2023-02-02 12:12:12",
+    content: "공부"
+  }
+],
+  effects_UNSTABLE: [persistAtomTodos],
 });
 
 const lastTodoIdAtom = atom({
   key: "app/lastTodoIdAtom",
-  default: 0,
-  effects_UNSTABLE: [persistAtom],
+  default: 3,
+  effects_UNSTABLE: [persistAtomLastTodoId],
 });
 
 
@@ -100,20 +120,10 @@ function useTodosStatus() {
   };
 }
 
-const muiThemePaletteKeys = [
-  "background",
-  "common",
-  "error",
-  "grey",
-  "info",
-  "primary",
-  "secondary",
-  "success",
-  "text",
-  "warning",
-];
 
-function NewTodoForm({ noticeSnackbarStatus}) {
+
+function NewTodoForm() {
+  const noticeSnackbarStatus = useNoticeSnackbarStatus();
   const todosStatus = useTodosStatus();
   const onSubmit = (e) => {
     e.preventDefault();
@@ -202,7 +212,8 @@ function useTodoOptionDrawerStatus() {
     
 }
 
-function EditTodoModal({ status, todo, closeDrawer, noticeSnackbarStatus}) {
+function EditTodoModal({ status, todo, closeDrawer}) {
+  const noticeSnackbarStatus = useNoticeSnackbarStatus();
   const todosStatus = useTodosStatus();
   const close = () => {
     status.close();
@@ -270,7 +281,8 @@ function useEditTodoModalStatus() {
 }
 
 
-function TodoOptionDrawer({status, noticeSnackbarStatus}) {
+function TodoOptionDrawer({status}) {
+  const noticeSnackbarStatus = useNoticeSnackbarStatus();
   const todosStatus = useTodosStatus();
 
   const editTodoModalStatus = useEditTodoModalStatus(); 
@@ -292,7 +304,7 @@ function TodoOptionDrawer({status, noticeSnackbarStatus}) {
 
   return (
     <>
-    <EditTodoModal status={editTodoModalStatus} todo={todo} closeDrawer={status.close} noticeSnackbarStatus={noticeSnackbarStatus} />
+    <EditTodoModal status={editTodoModalStatus} todo={todo} closeDrawer={status.close}  />
       <SwipeableDrawer
         anchor={"bottom"}
         onOpen={() => {}}
@@ -319,17 +331,18 @@ function TodoOptionDrawer({status, noticeSnackbarStatus}) {
 }
 
 
-function TodoList({ noticeSnackbarStatus }) {
+function TodoList() {
+  
   const todosStatus = useTodosStatus();
   const todoOptionDrawerStatus = useTodoOptionDrawerStatus();
   
   return(<>
-       <TodoOptionDrawer status={todoOptionDrawerStatus} noticeSnackbarStatus={noticeSnackbarStatus} />
+       <TodoOptionDrawer status={todoOptionDrawerStatus} />
        <div className="mt-4 px-4">
         <ul>
           {todosStatus.todos.map((todo, index) => (
            <TodoListItem key={todo.id} todo={todo} index={index} 
-           openDrawer={todoOptionDrawerStatus.open} noticeSnackbarStatus={noticeSnackbarStatus}
+           openDrawer={todoOptionDrawerStatus.open}
            />
           ))}
         </ul>
@@ -337,22 +350,40 @@ function TodoList({ noticeSnackbarStatus }) {
   </>)
 }
 
+const noticeSnackbarInfoAtom = atom({
+  key : "app/noticeSnackbarInfoAtom",
+  default: {
+    opened: false,
+    autoHideDuration: 0,
+    severity: "",
+    msg:"",
+  }
+})
+
 function useNoticeSnackbarStatus() {
-  const [opened, setOpened] = useState(false);
-  const [autoHideDuration, setAutoHideDuration] = useState(null);
-  const [severity, setSeverity] = useState(null);
-  const [msg, setMsg] = useState(null);
+
+  const [noticeSnackbarInfo, setNoticeSnackbarInfo] = useRecoilState(noticeSnackbarInfoAtom)
+
+  const opened = noticeSnackbarInfo.opened ;
+  const autoHideDuration = noticeSnackbarInfo.autoHideDuration ;
+  const severity= noticeSnackbarInfo.severity;
+  const msg = noticeSnackbarInfo.msg;
+
 
   const open = (msg, severity = "success", autoHideDuration = 6000) => {
-    setOpened(true);
-    setAutoHideDuration(autoHideDuration);
-    setSeverity(severity);
-    setMsg(msg);
-
+    setNoticeSnackbarInfo({
+      opened: true,
+      autoHideDuration,
+      severity,
+      msg,
+    });
   }
 
   const close = () => {
-    setOpened(false);
+    setNoticeSnackbarInfo({
+      ...noticeSnackbarInfo,
+      opened: false,
+    });
   }
 
   return {
@@ -366,7 +397,8 @@ function useNoticeSnackbarStatus() {
 }
 
 // 스낵바 컴포넌트
-function NoticeSnackbar({status}) {
+function NoticeSnackbar() {
+  const status = useNoticeSnackbarStatus();
   return(
   <>
     <Snackbar
@@ -379,25 +411,7 @@ function NoticeSnackbar({status}) {
 }
 
 function App({ theme }) {
-  const todosStatus = useTodosStatus();
-  const noticeSnackbarStatus = useNoticeSnackbarStatus();
-
- 
-
-  useEffect(() => {
-    const r = document.querySelector(':root');
-    
-    muiThemePaletteKeys.forEach((paletteKey) => {
-      const themeColorObj = theme.palette[paletteKey];
-      
-      for ( const key in themeColorObj ) {
-        if (Object.hasOwnProperty.call(themeColorObj, key)) {
-          const colorVal = themeColorObj[key];
-          r.style.setProperty(`--mui-color-${paletteKey}-${key}`, colorVal);
-        }
-      }
-    });
-  }, []);
+  
 
   
  
@@ -411,9 +425,9 @@ function App({ theme }) {
         </Toolbar>
        </AppBar>
        <Toolbar />
-       <NoticeSnackbar status={noticeSnackbarStatus}/>
-       <NewTodoForm noticeSnackbarStatus={noticeSnackbarStatus}/>
-       <TodoList noticeSnackbarStatus={noticeSnackbarStatus} /> 
+       <NoticeSnackbar/>
+       <NewTodoForm/>
+       <TodoList /> 
        {/* <RecoilEx/> */}
     </>
   );
