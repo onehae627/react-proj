@@ -3,13 +3,14 @@ import {AppBar,Toolbar,Button,TextField, Chip, SwipeableDrawer, List, ListItem, 
 import "./App.css";
 import classNames from "classnames";
 import RecoilEx from "./RecoilEx";
-
+import RouterEx from "./RouterEx";
 
 
 
 import { atom, useRecoilState } from "recoil";
 
 import { recoilPersist} from "recoil-persist";
+
 
 const { persistAtom:persistAtomTodos } = recoilPersist({
   key : "persistAtomTodos"
@@ -417,7 +418,7 @@ function App({ theme }) {
  
   return (
     <>
-        <AppBar position="fixed">
+        {/* <AppBar position="fixed">
         <Toolbar>
           <div className="flex-1"></div>
           <div className="font-bold">NOTEPAD</div>
@@ -427,8 +428,9 @@ function App({ theme }) {
        <Toolbar />
        <NoticeSnackbar/>
        <NewTodoForm/>
-       <TodoList /> 
+       <TodoList />  */}
        {/* <RecoilEx/> */}
+       <RouterEx />
     </>
   );
 }
